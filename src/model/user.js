@@ -48,10 +48,21 @@ const deleteById = async (id) => {
     return user;
 }
 
+const getByEmail = async (email) => {
+    const user = await prisma.users.findUnique({
+        where: {
+            email,
+        },
+    });
+
+    return user;
+}
+
 module.exports = {
     getAll,
     getById,
     create,
     updateById,
     deleteById,
+    getByEmail,
 };

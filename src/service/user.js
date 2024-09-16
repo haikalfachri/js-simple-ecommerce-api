@@ -4,6 +4,7 @@ const {
     create,
     deleteById,
     updateById,
+    getByEmail,
 } = require("../model/user");
 
 const getAllService = async () => {
@@ -48,11 +49,22 @@ const deleteByIdService = async (id) => {
     return user;
 }
 
+const getByEmailService = async (email) => {
+    const user = await getByEmail(email);
+
+    if (!user) {
+        throw new Error("User not found");
+    }
+
+    return user;
+}
+
 module.exports = {
     getAllService,
     getByIdService,
     createService,
     updateByIdService,
     deleteByIdService,
+    getByEmailService,
 };
 

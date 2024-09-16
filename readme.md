@@ -19,3 +19,7 @@ Prisma migrate
 Install bcrypt
 
 ```npm i bcrypt```
+
+Install JWT
+
+```npm i jsonwebtoken```
