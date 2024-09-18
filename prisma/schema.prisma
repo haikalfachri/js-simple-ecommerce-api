@@ -13,7 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model users {
+model User {
   id           String   @id @default(cuid())
   name         String?
   email        String   @unique
@@ -29,12 +29,23 @@ enum Role {
   ADMIN
 }
 
-model products {
+model Category {
+  id        String    @id @default(cuid())
+  name      String
+  createdAt DateTime  @default(now()) @db.Timestamptz
+  updatedAt DateTime  @updatedAt @db.Timestamptz
+  products  Product[]
+}
+
+model Product {
   id          String   @id @default(cuid())
   name        String
   description String?
   price       Float
-  image       String?
+  image_url   String?
+  category    Category @relation(fields: [category_id], references: [id])
+  category_id String
+  stock       Int
   createdAt   DateTime @default(now()) @db.Timestamptz
   updatedAt   DateTime @updatedAt @db.Timestamptz
 }

@@ -1,8 +1,11 @@
 const { z } = require('zod');
 
-const idSchema = z.string().cuid2();
 const emailSchema = z.string().email();
 const passwordSchema = z.string().min(8);
+
+const idSchema = z.object({
+    id: z.string().cuid(), 
+});
 
 module.exports = {
     idSchema,

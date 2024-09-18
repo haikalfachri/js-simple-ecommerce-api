@@ -12,7 +12,7 @@ const {
     idSchema,
     emailSchema,
     passwordSchema,
-} = require("../utils/validator");
+} = require("../utils/zod");
 
 const {
     getAllService,
@@ -43,32 +43,19 @@ const getByIdController = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const validateId = idSchema.validate(id);
-
-        if (!validateId) {
-            throw new Error("invalid id");
-        }
-
         const user = await getByIdService(id);
 
         res.status(200).json({
-            status: "successfully get user by id",
+            status: "successfully retrieved user by id",
             data: user,
         });
     } catch (error) {
-        if (error.message === "invalid id") {
-            res.status(400).json({
-                status: "error",
-                message: "invalid id",
-            });
-        } else {
-            res.status(500).json({
-                status: "error",
-                message: error.message,
-            });
-        }
+        res.status(500).json({
+            status: "error",
+            message: error.message,
+        });
     }
-}
+};
 
 const createController = async (req, res) => {
     try {

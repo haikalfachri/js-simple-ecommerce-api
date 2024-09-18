@@ -27,7 +27,3 @@ Install JWT
 Install validator
 
 ```npm i zod```
-
-Install seeder
-
-``` npm i @snaplet/seed```

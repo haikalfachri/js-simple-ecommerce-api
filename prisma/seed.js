@@ -2,8 +2,8 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const userSeed = async () => {
-    for (let i = 0; i < 10; i++) {
-        await prisma.users.create({
+    for (let i = 1; i <= 10; i++) {
+        await prisma.User.create({
             data: {
                 name: `user${i}`,
                 email: `user${i}@mail.com`,
@@ -13,14 +13,43 @@ const userSeed = async () => {
     }
 }
 
+const categorySeed = async () => {
+    for (let i = 1; i <= 4; i++) {
+        await prisma.Category.create({
+            data: {
+                name: `category${i}`,
+            },
+        });
+    }
+}
+
+const productSeed = async () => {
+    const categories = await prisma.Category.findMany();
+
+    for (let i = 1; i <= 10; i++) {
+        await prisma.Product.create({
+            data: {
+                name: `product${i}`,
+                price: 1000 * i,
+                category: {
+                    connect: { id: categories[i % categories.length].id }
+                },
+                stock: 10,
+            },
+        });
+    }
+}
+
 const seeder = async () => {
     try {
-        const user = await prisma.users.findFirst({
+        const user = await prisma.User.findFirst({
             where: { email: "user1@mail.com" },
         });
 
         if (!user) {
             await userSeed();
+            await categorySeed();
+            await productSeed();
             console.log("Data seeded successfully.");
         } else {
             console.log("Data already seeded.");

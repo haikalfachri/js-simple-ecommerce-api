@@ -69,6 +69,21 @@ const migrate = () => {
                 console.log(`Migration stdout (dev): ${stdout}`);
                 resolve(stdout);
             });
+        } else if (process.env.NODE_ENV === 'test') {
+            // Run prisma migrate dev in test
+            console.log('Running migrations for test using prisma db push...');
+            exec('npx prisma db push', (error, stdout, stderr) => {
+                if (error) {
+                    console.error(`Migration error (test): ${error.message}`);
+                    return reject(error);
+                }
+                if (stderr) {
+                    console.error(`Migration stderr (test): ${stderr}`);
+                    return reject(stderr);
+                }
+                console.log(`Migration stdout (test): ${stdout}`);
+                resolve(stdout);
+            });
         } else {
             console.log('Unknown environment, skipping migrations.');
             resolve('Skipping migrations.');
