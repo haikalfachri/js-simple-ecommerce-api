@@ -23,3 +23,11 @@ Install bcrypt
 Install JWT
 
 ```npm i jsonwebtoken```
+
+Install validator
+
+```npm i zod```
+
+Install seeder
+
+``` npm i @snaplet/seed```

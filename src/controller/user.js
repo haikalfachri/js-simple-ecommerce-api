@@ -9,6 +9,12 @@ const {
 } = require("../utils/jwt");
 
 const {
+    idSchema,
+    emailSchema,
+    passwordSchema,
+} = require("../utils/validator");
+
+const {
     getAllService,
     getByIdService,
     createService,
@@ -17,7 +23,7 @@ const {
     getByEmailService,
 } = require("../service/user");
 
-const getAllController = async (res) => {
+const getAllController = async (req, res) => {
     try {
         const users = await getAllService();
 
@@ -36,6 +42,13 @@ const getAllController = async (res) => {
 const getByIdController = async (req, res) => {
     try {
         const { id } = req.params;
+
+        const validateId = idSchema.validate(id);
+
+        if (!validateId) {
+            throw new Error("invalid id");
+        }
+
         const user = await getByIdService(id);
 
         res.status(200).json({
@@ -43,16 +56,23 @@ const getByIdController = async (req, res) => {
             data: user,
         });
     } catch (error) {
-        res.status(500).json({
-            status: "error",
-            message: error.message,
-        });
+        if (error.message === "invalid id") {
+            res.status(400).json({
+                status: "error",
+                message: "invalid id",
+            });
+        } else {
+            res.status(500).json({
+                status: "error",
+                message: error.message,
+            });
+        }
     }
 }
 
 const createController = async (req, res) => {
     try {
-        const userData = req.body;
+        const { userData } = req.body;
 
         if (!userData.email || !userData.password) {
             throw new Error("Email and password are required");
