@@ -14,14 +14,16 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(cuid())
+  id           String    @id @default(cuid())
   name         String?
-  email        String   @unique
+  email        String    @unique
   password     String
   phone_number String?
-  role         Role     @default(USER)
-  createdAt    DateTime @default(now()) @db.Timestamptz
-  updatedAt    DateTime @updatedAt @db.Timestamptz
+  role         Role      @default(USER)
+  createdAt    DateTime  @default(now()) @db.Timestamptz
+  updatedAt    DateTime  @updatedAt @db.Timestamptz
+  deletedAt    DateTime?
+  deleted      Boolean   @default(false)
 }
 
 enum Role {
@@ -32,20 +34,24 @@ enum Role {
 model Category {
   id        String    @id @default(cuid())
   name      String
+  products  Product[]
   createdAt DateTime  @default(now()) @db.Timestamptz
   updatedAt DateTime  @updatedAt @db.Timestamptz
-  products  Product[]
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
 }
 
 model Product {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   name        String
   description String?
   price       Float
   image_url   String?
-  category    Category @relation(fields: [category_id], references: [id])
+  category    Category  @relation(fields: [category_id], references: [id])
   category_id String
   stock       Int
-  createdAt   DateTime @default(now()) @db.Timestamptz
-  updatedAt   DateTime @updatedAt @db.Timestamptz
+  createdAt   DateTime  @default(now()) @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @db.Timestamptz
+  deletedAt   DateTime?
+  deleted     Boolean   @default(false)
 }
