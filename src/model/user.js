@@ -1,4 +1,4 @@
-const { prisma }  = require("../config/db");
+const { prisma } = require("../config/db");
 
 const getAll = async () => {
     const users = await prisma.User.findMany({
@@ -43,31 +43,24 @@ const updateById = async (id, data) => {
     return user;
 }
 
-const deleteById = async (id) => {
-    const user = await prisma.User.delete({
-        where: {
-            id,
-        },
+const softDeleteById = async (id) => {
+    return await prisma.user.delete({
+        where: { id }
     });
+};
 
-    return user;
-}
-
-const getByEmail = async (email) => {
-    const user = await prisma.User.findUnique({
-        where: {
-            email,
-        },
+const hardDeleteById = async (id) => {
+    return await prisma.user.delete({
+        where: { id },
+        forceDelete: true,
     });
-
-    return user;
-}
+};
 
 module.exports = {
     getAll,
     getById,
     create,
     updateById,
-    deleteById,
-    getByEmail,
+    softDeleteById,
+    hardDeleteById,
 };

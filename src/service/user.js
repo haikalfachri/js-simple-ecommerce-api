@@ -2,9 +2,9 @@ const {
     getAll,
     getById,
     create,
-    deleteById,
     updateById,
-    getByEmail,
+    softDeleteById,
+    hardDeleteById,
 } = require("../model/user");
 
 const getAllService = async () => {
@@ -39,8 +39,8 @@ const updateByIdService = async (id, data) => {
     return user;
 }
 
-const deleteByIdService = async (id) => {
-    const user = await deleteById(id);
+const softDeleteByIdService = async (id) => {
+    const user = await softDeleteById(id);
 
     if (!user) {
         throw new Error("User not found");
@@ -49,8 +49,8 @@ const deleteByIdService = async (id) => {
     return user;
 }
 
-const getByEmailService = async (email) => {
-    const user = await getByEmail(email);
+const hardDeleteByIdService = async (id) => {
+    const user = await hardDeleteById(id);
 
     if (!user) {
         throw new Error("User not found");
@@ -64,7 +64,7 @@ module.exports = {
     getByIdService,
     createService,
     updateByIdService,
-    deleteByIdService,
-    getByEmailService,
+    softDeleteByIdService,
+    hardDeleteByIdService,
 };
 

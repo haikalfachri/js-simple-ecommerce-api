@@ -4,11 +4,6 @@ const {
 } = require("../utils/bcrypt");
 
 const {
-    generateToken,
-    verifyToken,
-} = require("../utils/jwt");
-
-const {
     idSchema,
     emailSchema,
     passwordSchema,
@@ -20,7 +15,6 @@ const {
     createService,
     updateByIdService,
     deleteByIdService,
-    getByEmailService,
 } = require("../service/user");
 
 const getAllController = async (req, res) => {
@@ -116,68 +110,20 @@ const updateByIdController = async (req, res) => {
 const deleteByIdController = async (req, res) => {
     try {
         const { id } = req.params;
-        const user = await deleteByIdService(id);
+        const { forceDelete } = req.query; 
 
-        res.status(200).json({
-            status: "successfully delete user by id",
-            data: user,
-        });
+        if (forceDelete === 'true') {
+            await userService.hardDeleteUser(id); 
+            res.status(200).send('User hard-deleted');
+        } else {
+            await userService.softDeleteUser(id);
+            res.status(200).send('User soft-deleted');
+        }
     } catch (error) {
         res.status(500).json({
             status: "error",
             message: error.message,
         });
-    }
-}
-
-const loginController = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-
-        if (!email || !password) {
-            throw new Error("Email and password are required");
-        }
-
-        const user = await getByEmailService(email);
-
-        if (!user) {
-            throw new Error("Invalid email or password");
-        }
-
-        const isPasswordMatch = checkPassword(password, user.password);
-
-        if (!isPasswordMatch) {
-            throw new Error("Invalid email or password");
-        }
-
-        const token = generateToken({
-            id: user.id,
-            email: user.email,
-        });
-
-        res.status(200).json({
-            status: "successfully login",
-            data: {
-                token: token,
-            },
-        });
-    } catch (error) {
-        if (error.message === "Email and password are required") {
-            res.status(400).json({
-                status: "error",
-                message: "email and password are required",
-            });
-        } else if (error.message === "Invalid email or password") {
-            res.status(400).json({
-                status: "error",
-                message: "invalid email or password",
-            });
-        } else {
-            res.status(500).json({
-                status: "error",
-                message: error.message,
-            });
-        }
     }
 }
 
@@ -187,5 +133,4 @@ module.exports = {
     createController,
     updateByIdController,
     deleteByIdController,
-    loginController,
 };

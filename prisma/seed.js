@@ -1,16 +1,32 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
+const bcrypt = require('bcrypt');
+const cost = 10;
+
+const hashPassword = (password) => {
+    return bcrypt.hashSync(password, cost);
+};
+
 const userSeed = async () => {
     for (let i = 1; i <= 10; i++) {
         await prisma.User.create({
             data: {
                 name: `user${i}`,
                 email: `user${i}@mail.com`,
-                password: `password${i}`,
+                password: hashPassword("password"),
             },
         });
     }
+
+    await prisma.User.create({
+        data: {
+            name: "admin1",
+            email: "admin1@mail.com",
+            password: hashPassword("password"),
+            role: "ADMIN",
+        },
+    });
 }
 
 const categorySeed = async () => {
