@@ -22,7 +22,6 @@ const getById = async (id) => {
 };
 
 const create = async (data) => {
-    console.log(data.email)
     const user = await prisma.user.create({
         data: {
             email: data.email,
@@ -45,15 +44,21 @@ const updateById = async (id, data) => {
 }
 
 const softDeleteById = async (id) => {
-    return await prisma.user.delete({
-        where: { id }
+    return await prisma.user.update({
+        where: {
+            id,
+            deleted: true,
+            deletedAt: new Date(),
+
+        }
     });
 };
 
 const hardDeleteById = async (id) => {
     return await prisma.user.delete({
-        where: { id },
-        forceDelete: true,
+        where: {
+            id,
+        }
     });
 };
 

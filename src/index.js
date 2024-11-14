@@ -21,8 +21,8 @@ const startServer = () => {
 
 const startApp = async () => {
     try {
-        await createDatabase();
-        await migrate();
+        // await createDatabase();
+        // await migrate();
         startServer();
         seeder();
     } catch (error) {

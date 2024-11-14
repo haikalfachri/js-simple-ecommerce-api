@@ -24,8 +24,6 @@ const getByIdService = async (id) => {
 }
 
 const createService = async (data) => {
-    console.log(data.email)
-    
     const user = await create(data);
 
     return user;

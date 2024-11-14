@@ -10,6 +10,7 @@ const {
     softDeleteByIdService,
     hardDeleteByIdService
 } = require("../service/user");
+const { number } = require("zod");
 
 const getAllController = async (req, res) => {
     try {
@@ -85,8 +86,14 @@ const createController = async (req, res) => {
 const updateByIdController = async (req, res) => {
     try {
         const { id } = req.params;
-        const data = req.body;
-        const user = await updateByIdService(id, data);
+        const { name, phone_number } = req.body;
+
+        const userData = {
+            name: name,
+            phone_number: phone_number,
+        };
+
+        const user = await updateByIdService(id, userData);
 
         res.status(200).json({
             status: "successfully update user by id",

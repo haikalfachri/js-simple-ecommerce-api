@@ -1,6 +1,7 @@
 const {
     registerService,
     getByEmailService,
+    updateAuthenticationInfoService,
 } = require('../service/auth');
 
 const {
@@ -92,8 +93,44 @@ const loginController = async (req, res) => {
     }
 }
 
+const updateAuthenticationInfoController = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const { email, password } = req.body;
+
+        const hashedPassword = hashPassword(password);
+
+        const userData = {
+            email: email,
+            password: hashedPassword,
+        };
+
+        const user = await updateAuthenticationInfoService(id, userData);
+
+        res.status(200).json({
+            status: "successfully updated authentication info",
+            data: user,
+        });
+    } catch (error) {
+        if (error.message === "email and password are required") {
+            res.status(400).json({
+                status: "error",
+                message: "email and password are required",
+            });
+        } else {
+            res.status(500).json({
+                status: "error",
+                message: error.message,
+            });
+        }
+    }
+
+}
+
 module.exports = {
     registerController,
     loginController,
+    updateAuthenticationInfoController,
 };
 

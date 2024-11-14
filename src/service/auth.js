@@ -1,6 +1,7 @@
 const {
     create,
     getByEmail,
+    updateAuthenticationInfo,
 } = require("../model/auth");
 
 const registerService = async (data) => {
@@ -15,7 +16,14 @@ const getByEmailService = async (email) => {
     return user;
 }
 
+const updateAuthenticationInfoService = async (id, data) => {
+    const user = await updateAuthenticationInfo(id, data);
+
+    return user;
+}
+
 module.exports = {
     registerService,
     getByEmailService,
+    updateAuthenticationInfoService,
 };
