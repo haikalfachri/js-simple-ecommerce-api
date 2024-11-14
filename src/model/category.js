@@ -1,74 +1,56 @@
 const { prisma } = require("../config/db");
 
 const getAll = async () => {
-    const products = await prisma.product.findMany({
+    const categories = await prisma.category.findMany({
         where: {
             deleted: false,
         },
     });
 
-    return products;
+    return categories;
 }
 
 const getById = async (id) => {
-    const product = await prisma.product.findUnique({
+    const category = await prisma.category.findUnique({
         where: {
             deleted: false,
             id,
         },
     });
 
-    return product;
+    return category;
 };
 
 const create = async (data) => {
-    const product = await prisma.product.create({
+    const category = await prisma.category.create({
         data
     });
 
-    return product;
+    return category;
 }
 
 const updateById = async (id, data) => {
-    const product = await prisma.product.update({
+    const category = await prisma.category.update({
         where: {
             id,
         },
         data,
     });
 
-    return product;
+    return category;
 }
 
 const softDeleteById = async (id) => {
-    return await prisma.product.delete({
+    return await prisma.category.delete({
         where: { id }
     });
 };
 
 const hardDeleteById = async (id) => {
-    return await prisma.product.delete({
+    return await prisma.category.delete({
         where: { id },
         forceDelete: true,
     });
-}
-
-const buyProduct = async (id, data) => {
-
-    const product = await getById(id);
-
-    if (data.quantity > stock) {
-        throw new Error("out of stock");
-    }
-
-    product = await prisma.product.update({
-        where: {
-            id,
-        },
-        stock: stock - data.quantity,
-    });
-
-    return product;
 }
 
 module.exports = {
@@ -78,6 +60,5 @@ module.exports = {
     updateById,
     softDeleteById,
     hardDeleteById,
-    buyProduct,
-};
+}
 

@@ -1,7 +1,7 @@
 const { prisma } = require("../config/db");
 
 const getAll = async () => {
-    const users = await prisma.User.findMany({
+    const users = await prisma.user.findMany({
         where: {
             deleted: false,
         },
@@ -11,7 +11,7 @@ const getAll = async () => {
 };
 
 const getById = async (id) => {
-    const user = await prisma.User.findUnique({
+    const user = await prisma.user.findUnique({
         where: {
             deleted: false,
             id,
@@ -22,7 +22,8 @@ const getById = async (id) => {
 };
 
 const create = async (data) => {
-    const user = await prisma.User.create({
+    console.log(data.email)
+    const user = await prisma.user.create({
         data: {
             email: data.email,
             password: data.password,
@@ -33,7 +34,7 @@ const create = async (data) => {
 }
 
 const updateById = async (id, data) => {
-    const user = await prisma.User.update({
+    const user = await prisma.user.update({
         where: {
             id,
         },

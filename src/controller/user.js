@@ -1,20 +1,14 @@
 const {
     hashPassword,
-    checkPassword,
 } = require("../utils/bcrypt");
-
-const {
-    idSchema,
-    emailSchema,
-    passwordSchema,
-} = require("../utils/zod");
 
 const {
     getAllService,
     getByIdService,
     createService,
     updateByIdService,
-    deleteByIdService,
+    softDeleteByIdService,
+    hardDeleteByIdService
 } = require("../service/user");
 
 const getAllController = async (req, res) => {
@@ -53,15 +47,14 @@ const getByIdController = async (req, res) => {
 
 const createController = async (req, res) => {
     try {
-        const { userData } = req.body;
+        const { email, password } = req.body;
 
-        if (!userData.email || !userData.password) {
-            throw new Error("Email and password are required");
-        }
+        const hashedPassword = hashPassword(password);
 
-        const hashedPassword = hashPassword(userData.password);
-
-        userData.password = hashedPassword;
+        const userData = {
+            email: email,
+            password: hashedPassword,
+        };
 
         const user = await createService(userData);
 
@@ -70,7 +63,7 @@ const createController = async (req, res) => {
             data: user,
         });
     } catch (error) {
-        if (error.message === "Email and password are required") {
+        if (error.message === "email and password are required") {
             res.status(400).json({
                 status: "error",
                 message: "email and password are required",
@@ -112,12 +105,16 @@ const deleteByIdController = async (req, res) => {
         const { id } = req.params;
         const { forceDelete } = req.query; 
 
-        if (forceDelete === 'true') {
-            await userService.hardDeleteUser(id); 
-            res.status(200).send('User hard-deleted');
+        if (forceDelete === "true") {
+            await hardDeleteByIdService(id); 
+            res.status(200).json({
+                status: "successfully hard delete user by id",
+            });
         } else {
-            await userService.softDeleteUser(id);
-            res.status(200).send('User soft-deleted');
+            await softDeleteByIdService(id);
+            res.status(200).json({
+                status: "successfully soft delete user by id",
+            });
         }
     } catch (error) {
         res.status(500).json({

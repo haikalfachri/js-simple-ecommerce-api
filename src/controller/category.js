@@ -5,16 +5,15 @@ const {
     updateByIdService,
     softDeleteByIdService,
     hardDeleteByIdService,
-    buyProductService,
-} = require("../model/product");
+} = require("../service/category");
 
 const getAllController = async (req, res) => {
     try {
-        const products = await getAllService();
+        const categories = await getAllService();
 
         res.status(200).json({
-            status: "successfully get all products",
-            data: products,
+            status: "successfully get all categories",
+            data: categories,
         });
     } catch (error) {
         res.status(500).json({
@@ -28,11 +27,11 @@ const getByIdController = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const product = await getByIdService(id);
+        const category = await getByIdService(id);
 
         res.status(200).json({
-            status: "successfully retrieved product by id",
-            data: product,
+            status: "successfully retrieved category by id",
+            data: category,
         });
     } catch (error) {
         res.status(500).json({
@@ -44,17 +43,17 @@ const getByIdController = async (req, res) => {
 
 const createController = async (req, res) => {
     try {
-        const { productData } = req.body;
+        const { categoryData } = req.body;
 
-        if (!productData.name || !productData.price) {
-            throw new Error("name and price are required");
+        if (!categoryData.name) {
+            throw new Error("name is required");
         }
 
-        const product = await createService(productData);
+        const category = await createService(categoryData);
 
         res.status(201).json({
-            status: "successfully create new product",
-            data: product,
+            status: "successfully create new category",
+            data: category,
         });
     } catch (error) {
         res.status(500).json({
@@ -67,13 +66,13 @@ const createController = async (req, res) => {
 const updateByIdController = async (req, res) => {
     try {
         const { id } = req.params;
-        const { productData } = req.body;
+        const { categoryData } = req.body;
 
-        const product = await updateByIdService(id, productData);
+        const category = await updateByIdService(id, categoryData);
 
         res.status(200).json({
-            status: "successfully update product by id",
-            data: product,
+            status: "successfully update category by id",
+            data: category,
         });
     } catch (error) {
         res.status(500).json({
@@ -89,35 +88,12 @@ const deleteByIdController = async (req, res) => {
         const { forceDelete } = req.query; 
 
         if (forceDelete === 'true') {
-            await productService.hardDeleteProduct(id); 
-            res.status(200).send('product hard-deleted');
+            await categoryService.hardDeleteCategory(id); 
+            res.status(200).send('category hard-deleted');
         } else {
-            await productService.softDeleteProduct(id);
-            res.status(200).send('product soft-deleted');
+            await categoryService.softDeleteCategory(id);
+            res.status(200).send('category soft-deleted');
         }
-    } catch (error) {
-        res.status(500).json({
-            status: "error",
-            message: error.message,
-        });
-    }
-}
-
-const buyProductController = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { quantity } = req.body;
-
-        if (!quantity) {
-            throw new Error("quantity is required");
-        }
-
-        const product = await buyProductService(id, quantity);
-
-        res.status(200).json({
-            status: "successfully buy product by id",
-            data: product,
-        });
     } catch (error) {
         res.status(500).json({
             status: "error",
@@ -132,6 +108,4 @@ module.exports = {
     createController,
     updateByIdController,
     deleteByIdController,
-    buyProductController,
-};
-
+}

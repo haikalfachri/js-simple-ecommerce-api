@@ -18,7 +18,7 @@ const registerController = async (req, res) => {
         const userData  = req.body;
 
         if (!userData.email || !userData.password) {
-            throw new Error("Email and password are required");
+            throw new Error("email and password are required");
         }
 
         const hashedPassword = hashPassword(userData.password);
@@ -43,19 +43,19 @@ const loginController = async (req, res) => {
         const { email, password } = req.body;
 
         if (!email || !password) {
-            throw new Error("Email and password are required");
+            throw new Error("email and password are required");
         }
 
         const user = await getByEmailService(email);
 
         if (!user) {
-            throw new Error("Invalid email or password");
+            throw new Error("invalid email or password");
         }
 
         const isPasswordMatch = checkPassword(password, user.password);
 
         if (!isPasswordMatch) {
-            throw new Error("Invalid email or password");
+            throw new Error("invalid email or password");
         }
 
         const token = generateToken(
@@ -73,12 +73,12 @@ const loginController = async (req, res) => {
             },
         });
     } catch (error) {
-        if (error.message === "Email and password are required") {
+        if (error.message === "email and password are required") {
             res.status(400).json({
                 status: "error",
                 message: "email and password are required",
             });
-        } else if (error.message === "Invalid email or password") {
+        } else if (error.message === "invalid email or password") {
             res.status(400).json({
                 status: "error",
                 message: "invalid email or password",

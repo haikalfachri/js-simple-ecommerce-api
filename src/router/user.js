@@ -6,7 +6,6 @@ const {
     createController,
     updateByIdController,
     deleteByIdController,
-    loginController,
 } = require("../controller/user");
 
 const { idSchema } = require("../utils/zod");
@@ -20,7 +19,7 @@ const { authMiddleware,
 const userRouter = express.Router();
 
 userRouter.get("/", adminMiddleware, getAllController);
-userRouter.get('/:id', validationMiddleware(idSchema, 'params'), adminMiddleware, getByIdController);
+userRouter.get('/:id', adminMiddleware, validationMiddleware(idSchema, 'params'), getByIdController);
 userRouter.post("/", adminMiddleware,createController);
 userRouter.delete("/:id", adminMiddleware, deleteByIdController);
 userRouter.put("/:id", authMiddleware, updateByIdController);

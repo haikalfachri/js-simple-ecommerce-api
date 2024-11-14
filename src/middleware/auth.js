@@ -5,7 +5,7 @@ const authMiddleware = (req, res, next) => {
     if (!token) {
         return res.status(401).json({
             status: "unauthorized",
-            message: "access denied. No token provided."
+            message: "access denied. no token provided."
         });
     }
 
@@ -16,7 +16,7 @@ const authMiddleware = (req, res, next) => {
     } catch (err) {
         return res.status(401).json({
             status: "unauthorized",
-            message: "invalid token."
+            message: "invalid token or token expired."
         });
     }
 };
@@ -43,7 +43,7 @@ const adminMiddleware = (req, res, next) => {
     } catch (err) {
         return res.status(401).json({
             status: "unauthorized",
-            message: "invalid token."
+            message: "invalid token or token expired."
         });
     }
 };

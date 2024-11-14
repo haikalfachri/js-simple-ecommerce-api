@@ -1,7 +1,7 @@
 prisma.$use(async (params, next) => {
-    if (params.model === 'User') {
+    if (params.model === 'user') {
         if (params.action === 'delete') {
-            if (params.args?.forceDelete) {
+            if (params.args.forceDelete) {
                 return next(params);
             } else {
                 params.action = 'update';
