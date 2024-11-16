@@ -29,7 +29,7 @@ const updateAuthenticationInfo = async (id, data) => {
         updateData.password = data.password;
     }
 
-    const user = await prisma.User.update({
+    const user = await prisma.user.update({
         where: { id },
         data: updateData,
     });

@@ -5,8 +5,7 @@ const {
     updateByIdService,
     softDeleteByIdService,
     hardDeleteByIdService,
-    buyProductService,
-} = require("../model/product");
+} = require("../service/product");
 
 const getAllController = async (req, res) => {
     try {
@@ -67,9 +66,18 @@ const createController = async (req, res) => {
 const updateByIdController = async (req, res) => {
     try {
         const { id } = req.params;
-        const { productData } = req.body;
+        const { name, description, image_url, stock, price, category_id } = req.body;
 
-        const product = await updateByIdService(id, productData);
+        const data = {
+            name: name,
+            description: description,
+            imageUrl: image_url,
+            stock: stock,
+            price: price,
+            categoryId: category_id,
+        };
+
+        const product = await updateByIdService(id, data);
 
         res.status(200).json({
             status: "successfully update product by id",
@@ -89,35 +97,16 @@ const deleteByIdController = async (req, res) => {
         const { forceDelete } = req.query; 
 
         if (forceDelete === 'true') {
-            await productService.hardDeleteProduct(id); 
-            res.status(200).send('product hard-deleted');
+            await hardDeleteByIdService(id); 
+            res.status(200).json({
+                status: "successfully hard delete product by id",
+            });
         } else {
-            await productService.softDeleteProduct(id);
-            res.status(200).send('product soft-deleted');
+            await softDeleteByIdService(id);
+            res.status(200).json({
+                status: "successfully soft delete product by id",
+            });
         }
-    } catch (error) {
-        res.status(500).json({
-            status: "error",
-            message: error.message,
-        });
-    }
-}
-
-const buyProductController = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { quantity } = req.body;
-
-        if (!quantity) {
-            throw new Error("quantity is required");
-        }
-
-        const product = await buyProductService(id, quantity);
-
-        res.status(200).json({
-            status: "successfully buy product by id",
-            data: product,
-        });
     } catch (error) {
         res.status(500).json({
             status: "error",
@@ -132,6 +121,5 @@ module.exports = {
     createController,
     updateByIdController,
     deleteByIdController,
-    buyProductController,
 };
 

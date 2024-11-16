@@ -66,9 +66,13 @@ const createController = async (req, res) => {
 const updateByIdController = async (req, res) => {
     try {
         const { id } = req.params;
-        const { categoryData } = req.body;
+        const { name } = req.body;
 
-        const category = await updateByIdService(id, categoryData);
+        const data = {
+            name: name,
+        };
+
+        const category = await updateByIdService(id, data);
 
         res.status(200).json({
             status: "successfully update category by id",
@@ -88,11 +92,15 @@ const deleteByIdController = async (req, res) => {
         const { forceDelete } = req.query; 
 
         if (forceDelete === 'true') {
-            await categoryService.hardDeleteCategory(id); 
-            res.status(200).send('category hard-deleted');
+            await hardDeleteByIdService(id); 
+            res.status(200).json({
+                status: "successfully hard delete category by id",
+            });
         } else {
-            await categoryService.softDeleteCategory(id);
-            res.status(200).send('category soft-deleted');
+            await softDeleteByIdService(id);
+            res.status(200).json({
+                status: "successfully soft delete category by id",
+            });
         }
     } catch (error) {
         res.status(500).json({

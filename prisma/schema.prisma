@@ -74,6 +74,7 @@ model TransactionsOnProducts {
   product        Product     @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   product_id     String
   quantity       Int
+  total_price    Float
   transaction    Transaction @relation(fields: [transaction_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   transaction_id String
   createdAt      DateTime    @default(now()) @db.Timestamptz

@@ -21,7 +21,7 @@ const productRouter = express.Router();
 productRouter.get('/', adminMiddleware, getAllController);
 productRouter.get('/:id', adminMiddleware, validationMiddleware(idSchema, 'params'), getByIdController);
 productRouter.post('/', adminMiddleware, createController);
-productRouter.delete('/:id', adminMiddleware, deleteByIdController);
-productRouter.put('/:id', authMiddleware, updateByIdController);
+productRouter.delete('/:id', adminMiddleware, validationMiddleware(idSchema, 'params'), deleteByIdController);
+productRouter.put('/:id', authMiddleware, validationMiddleware(idSchema, 'params'), updateByIdController);
 
 module.exports = productRouter;

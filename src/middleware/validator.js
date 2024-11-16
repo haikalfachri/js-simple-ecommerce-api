@@ -4,7 +4,7 @@ const validationMiddleware = (schema, property = 'body') => (req, res, next) => 
         next();
     } catch (err) {
         res.status(400).json({
-            status: 'error',
+            status: 'validation error',
             message: err.errors.map((error) => error.message.toLowerCase()).join(', '),
         });
     }

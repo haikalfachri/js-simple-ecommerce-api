@@ -30,45 +30,40 @@ const create = async (data) => {
 }
 
 const updateById = async (id, data) => {
+
     const product = await prisma.product.update({
         where: {
             id,
         },
-        data,
+        data: {
+            name: data.name,
+            price: data.price,
+            description: data.description,
+            image_url: data.imageUrl,
+            category_id: data.categoryId,
+            stock: data.stock,
+        },
     });
 
     return product;
 }
 
 const softDeleteById = async (id) => {
-    return await prisma.product.delete({
-        where: { id }
-    });
-};
-
-const hardDeleteById = async (id) => {
-    return await prisma.product.delete({
-        where: { id },
-        forceDelete: true,
+    return await prisma.product.update({
+        where: {
+            id,
+            deleted: true,
+            deletedAt: new Date(),
+        }
     });
 }
 
-const buyProduct = async (id, data) => {
-
-    const product = await getById(id);
-
-    if (data.quantity > stock) {
-        throw new Error("out of stock");
-    }
-
-    product = await prisma.product.update({
+const hardDeleteById = async (id) => {
+    return await prisma.product.delete({
         where: {
             id,
         },
-        stock: stock - data.quantity,
     });
-
-    return product;
 }
 
 module.exports = {
@@ -78,6 +73,5 @@ module.exports = {
     updateById,
     softDeleteById,
     hardDeleteById,
-    buyProduct,
 };
 

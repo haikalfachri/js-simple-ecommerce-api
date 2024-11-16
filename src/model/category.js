@@ -34,22 +34,29 @@ const updateById = async (id, data) => {
         where: {
             id,
         },
-        data,
+        data: {
+            name: data.name,
+        },
     });
 
     return category;
 }
 
 const softDeleteById = async (id) => {
-    return await prisma.category.delete({
-        where: { id }
+    return await prisma.category.update({
+        where: {
+            id,
+            deleted: true,
+            deletedAt: new Date(),
+        }
     });
-};
+}
 
 const hardDeleteById = async (id) => {
     return await prisma.category.delete({
-        where: { id },
-        forceDelete: true,
+        where: {
+            id,
+        },
     });
 }
 

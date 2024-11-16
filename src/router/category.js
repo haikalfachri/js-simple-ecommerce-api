@@ -21,7 +21,7 @@ const categoryRouter = express.Router();
 categoryRouter.get("/", adminMiddleware, getAllController);
 categoryRouter.get('/:id', adminMiddleware, validationMiddleware(idSchema, 'params'), getByIdController);
 categoryRouter.post("/", adminMiddleware,createController);
-categoryRouter.delete("/:id", adminMiddleware, deleteByIdController);
-categoryRouter.put("/:id", authMiddleware, updateByIdController);
+categoryRouter.delete("/:id", adminMiddleware, validationMiddleware(idSchema, 'params'), deleteByIdController);
+categoryRouter.put("/:id", authMiddleware, validationMiddleware(idSchema, 'params'), updateByIdController);
 
 module.exports = categoryRouter;

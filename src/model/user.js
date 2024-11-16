@@ -37,7 +37,9 @@ const updateById = async (id, data) => {
         where: {
             id,
         },
-        data,
+        data: {
+            name: data.name,
+            phone_number: data.phoneNumber,},
     });
 
     return user;

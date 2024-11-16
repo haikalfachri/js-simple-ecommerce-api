@@ -10,7 +10,6 @@ const {
     softDeleteByIdService,
     hardDeleteByIdService
 } = require("../service/user");
-const { number } = require("zod");
 
 const getAllController = async (req, res) => {
     try {
@@ -52,12 +51,12 @@ const createController = async (req, res) => {
 
         const hashedPassword = hashPassword(password);
 
-        const userData = {
+        const data = {
             email: email,
             password: hashedPassword,
         };
 
-        const user = await createService(userData);
+        const user = await createService(data);
 
         res.status(201).json({
             status: "successfully create new user",
@@ -88,12 +87,12 @@ const updateByIdController = async (req, res) => {
         const { id } = req.params;
         const { name, phone_number } = req.body;
 
-        const userData = {
+        const data = {
             name: name,
-            phone_number: phone_number,
+            phoneNumber: phone_number,
         };
 
-        const user = await updateByIdService(id, userData);
+        const user = await updateByIdService(id, data);
 
         res.status(200).json({
             status: "successfully update user by id",

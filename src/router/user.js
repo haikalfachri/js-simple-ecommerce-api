@@ -8,7 +8,7 @@ const {
     deleteByIdController,
 } = require("../controller/user");
 
-const { idSchema, userInfoSchema } = require("../utils/zod");
+const { idSchema, userInfoUpdateSchema } = require("../utils/zod");
 
 const validationMiddleware = require("../middleware/validator");
 
@@ -22,6 +22,6 @@ userRouter.get("/", adminMiddleware, getAllController);
 userRouter.get('/:id', adminMiddleware, validationMiddleware(idSchema, 'params'), getByIdController);
 userRouter.post("/", adminMiddleware,createController);
 userRouter.delete("/:id", adminMiddleware, deleteByIdController);
-userRouter.put("/:id", authMiddleware, validationMiddleware(userInfoSchema, 'body'), updateByIdController);
+userRouter.put("/:id", authMiddleware, validationMiddleware(idSchema, 'params'), validationMiddleware(userInfoUpdateSchema, 'body'), updateByIdController);
 
 module.exports = userRouter;
