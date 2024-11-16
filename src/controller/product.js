@@ -1,15 +1,15 @@
 const {
-    getAllService,
-    getByIdService,
-    createService,
-    updateByIdService,
-    softDeleteByIdService,
-    hardDeleteByIdService,
-} = require("../service/product");
+    getAll,
+    getById,
+    create,
+    updateById,
+    softDeleteById,
+    hardDeleteById,
+} = require("../model/product");
 
 const getAllController = async (req, res) => {
     try {
-        const products = await getAllService();
+        const products = await getAll();
 
         res.status(200).json({
             status: "successfully get all products",
@@ -27,7 +27,7 @@ const getByIdController = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const product = await getByIdService(id);
+        const product = await getById(id);
 
         res.status(200).json({
             status: "successfully retrieved product by id",
@@ -49,7 +49,7 @@ const createController = async (req, res) => {
             throw new Error("name and price are required");
         }
 
-        const product = await createService(productData);
+        const product = await create(productData);
 
         res.status(201).json({
             status: "successfully create new product",
@@ -77,7 +77,7 @@ const updateByIdController = async (req, res) => {
             categoryId: category_id,
         };
 
-        const product = await updateByIdService(id, data);
+        const product = await updateById(id, data);
 
         res.status(200).json({
             status: "successfully update product by id",
@@ -97,12 +97,12 @@ const deleteByIdController = async (req, res) => {
         const { forceDelete } = req.query; 
 
         if (forceDelete === 'true') {
-            await hardDeleteByIdService(id); 
+            await hardDeleteById(id); 
             res.status(200).json({
                 status: "successfully hard delete product by id",
             });
         } else {
-            await softDeleteByIdService(id);
+            await softDeleteById(id);
             res.status(200).json({
                 status: "successfully soft delete product by id",
             });

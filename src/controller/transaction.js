@@ -1,17 +1,17 @@
 const {
-    createService,
-    getAllService,
-    getByIdService,
-    updateByIdService,
-    softDeleteByIdService,
-    hardDeleteByIdService,
-    buyProductService,
-    transactionHistoryService,
-} = require("../service/transaction");
+    create,
+    getAll,
+    getById,
+    updateById,
+    softDeleteById,
+    hardDeleteById,
+    buyProduct,
+    transactionHistory,
+} = require("../model/transaction");
 
 const getAllController = async (req, res) => {
     try {
-        const transactions = await getAllService();
+        const transactions = await getAll();
 
         res.status(200).json({
             status: "successfully get all transactions",
@@ -29,7 +29,7 @@ const getByIdController = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const transaction = await getByIdService(id);
+        const transaction = await getById(id);
 
         res.status(200).json({
             status: "successfully retrieved transaction by id",
@@ -51,7 +51,7 @@ const createController = async (req, res) => {
             throw new Error("userId, productId, and amount are required");
         }
 
-        const transaction = await createService(transactionData);
+        const transaction = await create(transactionData);
 
         res.status(201).json({
             status: "successfully create new transaction",
@@ -70,7 +70,7 @@ const updateByIdController = async (req, res) => {
         const { id } = req.params;
         const { transactionData } = req.body;
 
-        const transaction = await updateByIdService(id, transactionData);
+        const transaction = await updateById(id, transactionData);
 
         res.status(200).json({
             status: "successfully update transaction by id",
@@ -90,12 +90,12 @@ const deleteByIdController = async (req, res) => {
         const { forceDelete } = req.query;
 
         if (forceDelete === 'true') {
-            await hardDeleteByIdService(id);
+            await hardDeleteById(id);
             res.status(200).json({
                 status: "successfully hard delete transaction by id",
             });
         } else {
-            await softDeleteByIdService(id);
+            await softDeleteById(id);
             res.status(200).json({
                 status: "successfully soft delete transaction by id",
             });
@@ -130,7 +130,7 @@ const buyProductController = async (req, res) => {
                 quantity: quantity,
             };
 
-            const transaction = await buyProductService(data);
+            const transaction = await buyProduct(data);
             transactions.push(transaction);
         }
 
@@ -162,7 +162,7 @@ const transactionHistoryController = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const transactions = await transactionHistoryService(id);
+        const transactions = await transactionHistory(id);
 
         res.status(200).json({
             status: "successfully get all transactions",

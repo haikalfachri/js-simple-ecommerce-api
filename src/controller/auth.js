@@ -1,8 +1,8 @@
 const {
-    registerService,
-    getByEmailService,
-    updateAuthenticationInfoService,
-} = require('../service/auth');
+    create,
+    getByEmail,
+    updateAuthenticationInfo,
+} = require('../model/auth');
 
 const {
     hashPassword,
@@ -26,7 +26,7 @@ const registerController = async (req, res) => {
 
         userData.password = hashedPassword;
 
-        const user = await registerService(userData);
+        const user = await create(userData);
         res.status(201).json({
             status: "successfully registered",
             data: user,
@@ -47,7 +47,7 @@ const loginController = async (req, res) => {
             throw new Error("email and password are required");
         }
 
-        const user = await getByEmailService(email);
+        const user = await getByEmail(email);
 
         if (!user) {
             throw new Error("invalid email or password");
@@ -106,7 +106,7 @@ const updateAuthenticationInfoController = async (req, res) => {
             password: hashedPassword,
         };
 
-        const user = await updateAuthenticationInfoService(id, userData);
+        const user = await updateAuthenticationInfo(id, userData);
 
         res.status(200).json({
             status: "successfully updated authentication info",

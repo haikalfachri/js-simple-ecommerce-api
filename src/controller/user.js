@@ -3,17 +3,17 @@ const {
 } = require("../utils/bcrypt");
 
 const {
-    getAllService,
-    getByIdService,
-    createService,
-    updateByIdService,
-    softDeleteByIdService,
-    hardDeleteByIdService
-} = require("../service/user");
+    getAll,
+    getById,
+    create,
+    updateById,
+    softDeleteById,
+    hardDeleteById
+} = require("../model/user");
 
 const getAllController = async (req, res) => {
     try {
-        const users = await getAllService();
+        const users = await getAll();
 
         res.status(200).json({
             status: "successfully get all users",
@@ -31,7 +31,7 @@ const getByIdController = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const user = await getByIdService(id);
+        const user = await getById(id);
 
         res.status(200).json({
             status: "successfully retrieved user by id",
@@ -56,7 +56,7 @@ const createController = async (req, res) => {
             password: hashedPassword,
         };
 
-        const user = await createService(data);
+        const user = await create(data);
 
         res.status(201).json({
             status: "successfully create new user",
@@ -92,7 +92,7 @@ const updateByIdController = async (req, res) => {
             phoneNumber: phone_number,
         };
 
-        const user = await updateByIdService(id, data);
+        const user = await updateById(id, data);
 
         res.status(200).json({
             status: "successfully update user by id",
@@ -112,12 +112,12 @@ const deleteByIdController = async (req, res) => {
         const { forceDelete } = req.query; 
 
         if (forceDelete === "true") {
-            await hardDeleteByIdService(id); 
+            await hardDeleteById(id); 
             res.status(200).json({
                 status: "successfully hard delete user by id",
             });
         } else {
-            await softDeleteByIdService(id);
+            await softDeleteById(id);
             res.status(200).json({
                 status: "successfully soft delete user by id",
             });

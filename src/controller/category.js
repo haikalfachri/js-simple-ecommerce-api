@@ -1,15 +1,15 @@
 const {
-    getAllService,
-    getByIdService,
-    createService,
-    updateByIdService,
-    softDeleteByIdService,
-    hardDeleteByIdService,
-} = require("../service/category");
+    getAll,
+    getById,
+    create,
+    updateById,
+    softDeleteById,
+    hardDeleteById,
+} = require("../model/category");
 
 const getAllController = async (req, res) => {
     try {
-        const categories = await getAllService();
+        const categories = await getAll();
 
         res.status(200).json({
             status: "successfully get all categories",
@@ -27,7 +27,7 @@ const getByIdController = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const category = await getByIdService(id);
+        const category = await getById(id);
 
         res.status(200).json({
             status: "successfully retrieved category by id",
@@ -49,7 +49,7 @@ const createController = async (req, res) => {
             throw new Error("name is required");
         }
 
-        const category = await createService(categoryData);
+        const category = await create(categoryData);
 
         res.status(201).json({
             status: "successfully create new category",
@@ -72,7 +72,7 @@ const updateByIdController = async (req, res) => {
             name: name,
         };
 
-        const category = await updateByIdService(id, data);
+        const category = await updateById(id, data);
 
         res.status(200).json({
             status: "successfully update category by id",
@@ -92,12 +92,12 @@ const deleteByIdController = async (req, res) => {
         const { forceDelete } = req.query; 
 
         if (forceDelete === 'true') {
-            await hardDeleteByIdService(id); 
+            await hardDeleteById(id); 
             res.status(200).json({
                 status: "successfully hard delete category by id",
             });
         } else {
-            await softDeleteByIdService(id);
+            await softDeleteById(id);
             res.status(200).json({
                 status: "successfully soft delete category by id",
             });
