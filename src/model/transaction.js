@@ -5,6 +5,9 @@ const getAll = async () => {
         where: {
             deleted: false,
         },
+        include: {
+            products: true,
+        },
     });
 
     return transactions;
@@ -16,6 +19,9 @@ const getById = async (id) => {
             deleted: false,
             id,
         },
+        include: {
+            products: true,
+        },
     });
 
     return transaction;
@@ -23,7 +29,13 @@ const getById = async (id) => {
 
 const create = async (data) => {
     const transaction = await prisma.transaction.create({
-        data
+        data: {
+            user_id: data.userId,
+            total_price: data.totalPrice,
+        },
+        include: {
+            products: true,
+        },
     });
 
     return transaction;
@@ -35,6 +47,9 @@ const updateById = async (id, data) => {
             id,
         },
         data,
+        include: {
+            products: true,
+        },
     });
 
     return transaction;
@@ -58,47 +73,75 @@ const hardDeleteById = async (id) => {
     });
 }
 
-const buyProduct = async (data) => {
-    let product = await prisma.product.findFirst({
-        where: {
-            id: data.productId,
-        }
+const buyProduct = async (userId, products) => {
+    const productIds = products.map((p) => p.product_id);
+    const fetchedProducts = await prisma.product.findMany({
+        where: { id: { in: productIds } },
     });
-    
-    if (product.stock - data.quantity < 0) {
-        throw new Error("out of stock");
+
+    if (fetchedProducts.length !== products.length) {
+        throw new Error("one or more products not found");
     }
 
-    product = await prisma.product.update({
-        where: {
-            id: data.productId,
-        },
-        data: {
-            stock: {
-                decrement: data.quantity, 
-            },
-        },
-    });
+    const transactionsOnProducts = [];
+    let totalPrice = 0;
 
-    totalPrice = product.price * data.quantity;
-    console.log(totalPrice);
+    for (const product of products) {
+        const { product_id, quantity } = product;
+
+        if (!product_id || quantity <= 0) {
+            throw new Error("each product must have a valid product_id and a positive quantity");
+        }
+
+        const fetchedProduct = fetchedProducts.find((p) => p.id === product_id);
+
+        if (!fetchedProduct) {
+            throw new Error(`product with ID ${product_id} not found`);
+        }
+
+        if (fetchedProduct.stock < quantity) {
+            throw new Error(`product with ID ${product_id} is out of stock`);
+        }
+
+        await prisma.product.update({
+            where: { id: product_id },
+            data: { stock: { decrement: quantity } },
+        });
+
+        const subtotalPrice = fetchedProduct.price * quantity;
+        totalPrice += subtotalPrice;
+
+        transactionsOnProducts.push({
+            product_id,
+            quantity,
+            subtotal_price: subtotalPrice,
+        });
+    }
 
     const transaction = await prisma.transaction.create({
         data: {
-            user_id: data.userId,
-            product_id: data.productId,
-            quantity: data.quantity,
+            user_id: userId,
+            total_price: totalPrice,
+            products: {
+                create: transactionsOnProducts,
+            },
+        },
+        include: {
+            products: true, 
         },
     });
 
     return transaction;
-}
+};
 
 const transactionHistory = async (id) => {
     const transaction = await prisma.transaction.findMany({
         where: {
             deleted: false,
-            userId: id,
+            user_id: id,
+        },
+        include: {
+            products: true,
         },
     });
 

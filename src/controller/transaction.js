@@ -45,13 +45,14 @@ const getByIdController = async (req, res) => {
 
 const createController = async (req, res) => {
     try {
-        const { transactionData } = req.body;
+        const { user_id, total_price } = req.body;
 
-        if (!transactionData.userId || !transactionData.productId || !transactionData.amount) {
-            throw new Error("userId, productId, and amount are required");
+        const data = {
+            userId: user_id,
+            totalPrice: total_price
         }
 
-        const transaction = await create(transactionData);
+        const transaction = await create(data);
 
         res.status(201).json({
             status: "successfully create new transaction",
@@ -113,48 +114,28 @@ const buyProductController = async (req, res) => {
         const { user_id, products } = req.body;
 
         if (!user_id || !Array.isArray(products) || products.length === 0) {
-            throw new Error("user_id and products (array of objects with product_id and quantity) are required");
-        }
-
-        const transactions = [];
-        for (const product of products) {
-            const { product_id, quantity } = product;
-
-            if (!product_id || !quantity) {
-                throw new Error("each product must have product_id and quantity");
-            }
-
-            const data = {
-                userId: user_id,
-                productId: product_id,
-                quantity: quantity,
-            };
-
-            const transaction = await buyProduct(data);
-            transactions.push(transaction);
-        }
-
-        res.status(201).json({
-            status: "successfully bought products",
-            data: transactions,
-        });
-    } catch (error) {
-        if (error.message === "user_id and products (array of objects with product_id and quantity) are required") {
-            res.status(400).json({
+            return res.status(400).json({
                 status: "error",
                 message: "user_id and products (array of objects with product_id and quantity) are required",
             });
-        } else if (error.message === "out of stock") {
-            res.status(400).json({
-                status: "error",
-                message: "the product is out of stock",
-            });
-        } else {
-            res.status(500).json({
-                status: "error",
-                message: error.message,
-            });
         }
+
+        const transaction = await buyProduct(user_id, products);
+
+        res.status(201).json({
+            status: "success",
+            message: "products successfully purchased",
+            data: transaction,
+        });
+    } catch (error) {
+        const statusCode = error.message.includes("out of stock") || error.message.includes("required")
+            ? 400
+            : 500;
+
+        res.status(statusCode).json({
+            status: "error",
+            message: error.message,
+        });
     }
 };
 
