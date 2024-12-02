@@ -5,9 +5,15 @@ const {
     updateById,
     softDeleteById,
     hardDeleteById,
-    buyProduct,
+    checkout,
     transactionHistory,
 } = require("../model/transaction");
+
+const {
+    snap,
+} = require('../config/midtrans');
+
+require('cuid');
 
 const getAllController = async (req, res) => {
     try {
@@ -109,7 +115,7 @@ const deleteByIdController = async (req, res) => {
     }
 }
 
-const buyProductController = async (req, res) => {
+const checkoutController = async (req, res) => {
     try {
         const { user_id, products } = req.body;
 
@@ -120,12 +126,26 @@ const buyProductController = async (req, res) => {
             });
         }
 
-        const transaction = await buyProduct(user_id, products);
+        const transaction = await checkout(user_id, products);
 
-        res.status(201).json({
+        const transactionDetails = {
+            order_id: transaction.id,
+            gross_amount: transaction.total_price,
+        };
+
+        const customerDetails = {
+            user_id,
+        };
+
+        const snapToken = await snap.createTransaction({
+            transaction_details: transactionDetails,
+            customer_details: customerDetails,
+        });
+
+        res.status(200).json({
             status: "success",
-            message: "products successfully purchased",
-            data: transaction,
+            message: "snap token generated successfully",
+            data: { snapToken, transaction_id: transactionDetails.order_id },
         });
     } catch (error) {
         const statusCode = error.message.includes("out of stock") || error.message.includes("required")
@@ -163,7 +183,7 @@ module.exports = {
     createController,
     updateByIdController,
     deleteByIdController,
-    buyProductController,
+    checkoutController,
     transactionHistoryController,
 };
 

@@ -6,7 +6,7 @@ const {
     createController,
     updateByIdController,
     deleteByIdController,
-    buyProductController,
+    checkoutController,
     transactionHistoryController,
 } = require('../controller/transaction');
 
@@ -25,7 +25,7 @@ transactionRouter.get('/:id', adminMiddleware, validationMiddleware(idSchema, 'p
 transactionRouter.post('/', adminMiddleware, createController);
 transactionRouter.delete('/:id', adminMiddleware, validationMiddleware(idSchema, 'params'), deleteByIdController);
 transactionRouter.put('/:id', adminMiddleware, validationMiddleware(idSchema, 'params'), updateByIdController);
-transactionRouter.post('/buy', authMiddleware, buyProductController);
+transactionRouter.post('/buy', authMiddleware, checkoutController);
 transactionRouter.get('/history/:id', authMiddleware, validationMiddleware(idSchema, 'params'), transactionHistoryController);
 
 module.exports = transactionRouter;

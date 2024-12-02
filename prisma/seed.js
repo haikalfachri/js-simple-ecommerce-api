@@ -10,7 +10,7 @@ const hashPassword = (password) => {
 
 const userSeed = async () => {
     for (let i = 1; i <= 10; i++) {
-        await prisma.User.create({
+        await prisma.user.create({
             data: {
                 name: `user${i}`,
                 email: `user${i}@mail.com`,
@@ -19,7 +19,7 @@ const userSeed = async () => {
         });
     }
 
-    await prisma.User.create({
+    await prisma.user.create({
         data: {
             name: "admin1",
             email: "admin1@mail.com",
@@ -31,7 +31,7 @@ const userSeed = async () => {
 
 const categorySeed = async () => {
     for (let i = 1; i <= 4; i++) {
-        await prisma.Category.create({
+        await prisma.category.create({
             data: {
                 name: `category${i}`,
             },
@@ -40,7 +40,7 @@ const categorySeed = async () => {
 }
 
 const productSeed = async () => {
-    const categories = await prisma.Category.findMany();
+    const categories = await prisma.category.findMany();
 
     for (let i = 1; i <= 10; i++) {
         await prisma.Product.create({
@@ -58,7 +58,7 @@ const productSeed = async () => {
 
 const seeder = async () => {
     try {
-        const user = await prisma.User.findFirst({
+        const user = await prisma.user.findFirst({
             where: { email: "user1@mail.com" },
         });
 

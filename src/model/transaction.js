@@ -1,3 +1,4 @@
+const { check } = require("prisma");
 const { prisma } = require("../config/db");
 
 const getAll = async () => {
@@ -73,7 +74,7 @@ const hardDeleteById = async (id) => {
     });
 }
 
-const buyProduct = async (userId, products) => {
+const checkout = async (userId, products) => {
     const productIds = products.map((p) => p.product_id);
     const fetchedProducts = await prisma.product.findMany({
         where: { id: { in: productIds } },
@@ -89,7 +90,7 @@ const buyProduct = async (userId, products) => {
     for (const product of products) {
         const { product_id, quantity } = product;
 
-        if (!product_id || quantity <= 0) {
+        if (!product_id || quantity < 0) {
             throw new Error("each product must have a valid product_id and a positive quantity");
         }
 
@@ -127,7 +128,24 @@ const buyProduct = async (userId, products) => {
             },
         },
         include: {
+            user: true,
             products: true, 
+        },
+    });
+
+    return transaction;
+};
+
+const payOrderMidtrans = async (id) => {
+    const transaction = await prisma.transaction.update({
+        where: {
+            id,
+        },
+        data: {
+            status: "PAID", 
+        },
+        include: {
+            products: true,
         },
     });
 
@@ -155,7 +173,8 @@ module.exports = {
     updateById,
     softDeleteById,
     hardDeleteById,
-    buyProduct,
+    checkout,
+    payOrderMidtrans,
     transactionHistory,
 };
 

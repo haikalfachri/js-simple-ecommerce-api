@@ -64,10 +64,17 @@ model Transaction {
   user_id     String
   products    TransactionsOnProducts[]
   total_price Float
+  status      Status                   @default(PENDING)
   createdAt   DateTime                 @default(now()) @db.Timestamptz
   updatedAt   DateTime                 @updatedAt @db.Timestamptz
   deletedAt   DateTime?
   deleted     Boolean                  @default(false)
+}
+
+enum Status {
+  PAID
+  PENDING
+  CANCELLED
 }
 
 model TransactionsOnProducts {
@@ -75,7 +82,7 @@ model TransactionsOnProducts {
   product        Product     @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   product_id     String
   quantity       Int
-  subtotal_price    Float
+  subtotal_price Float
   transaction    Transaction @relation(fields: [transaction_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   transaction_id String
   createdAt      DateTime    @default(now()) @db.Timestamptz
