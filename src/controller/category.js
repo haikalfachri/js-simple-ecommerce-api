@@ -5,7 +5,7 @@ const {
     updateById,
     softDeleteById,
     hardDeleteById,
-} = require("../model/category");
+} = require("../repository/category");
 
 const getAllController = async (req, res) => {
     try {

@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const {
     payOrderMidtrans,
-} = require('../model/transaction');
+} = require('../repository/transaction');
 
 const midtransPayment = async (req, res) => {
     try {

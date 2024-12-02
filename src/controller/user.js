@@ -9,7 +9,7 @@ const {
     updateById,
     softDeleteById,
     hardDeleteById
-} = require("../model/user");
+} = require("../repository/user");
 
 const getAllController = async (req, res) => {
     try {

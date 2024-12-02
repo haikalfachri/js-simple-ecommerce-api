@@ -5,7 +5,7 @@ const {
     updateById,
     softDeleteById,
     hardDeleteById,
-} = require("../model/product");
+} = require("../repository/product");
 
 const getAllController = async (req, res) => {
     try {

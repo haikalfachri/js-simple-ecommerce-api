@@ -2,7 +2,7 @@ const {
     create,
     getByEmail,
     updateAuthenticationInfo,
-} = require('../model/auth');
+} = require('../repository/auth');
 
 const {
     hashPassword,

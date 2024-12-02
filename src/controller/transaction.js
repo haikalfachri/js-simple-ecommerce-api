@@ -7,7 +7,7 @@ const {
     hardDeleteById,
     checkout,
     transactionHistory,
-} = require("../model/transaction");
+} = require("../repository/transaction");
 
 const {
     snap,
