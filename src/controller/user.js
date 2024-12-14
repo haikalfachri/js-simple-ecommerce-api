@@ -86,6 +86,37 @@ const updateByIdController = async (req, res) => {
     try {
         const { id } = req.params;
         const { name, phone_number } = req.body;
+        const folder = "user";
+        const image_url = req.file ? `asset/${folder}/${req.file.filename}` : null;
+
+        const existingUser = await getById(id);
+
+        if (!existingUser) {
+            return res.status(404).json({
+                status: "error",
+                message: "user not found",
+            });
+        }
+
+        if (image_url && existingUser.image_url) {
+            const oldImagePath = path.join(__dirname, "../public", existingUser.image_url);
+            if (fs.existsSync(oldImagePath)) {
+                fs.unlinkSync(oldImagePath);
+            }
+
+            const updatedData = {
+                name: name || existingUser.name,
+                phone_number: phone_number || existingUser.phone_number,
+            };
+
+            const updatedUser = await updateById(id, updatedData);
+
+            res.status(200).json({
+                status: "success",
+                message: "successfully updated the user",
+                data: updatedUser,
+            });
+        }
 
         const data = {
             name: name,
@@ -112,6 +143,11 @@ const deleteByIdController = async (req, res) => {
         const { forceDelete } = req.query; 
 
         if (forceDelete === "true") {
+            const existingUser = await getById(id);
+            const oldImagePath = path.join(__dirname, "../public", existingUser.image_url);
+            if (fs.existsSync(oldImagePath)) {
+                fs.unlinkSync(oldImagePath);
+            }
             await hardDeleteById(id); 
             res.status(200).json({
                 status: "successfully hard delete user by id",

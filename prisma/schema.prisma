@@ -19,6 +19,7 @@ model User {
   email        String        @unique
   password     String
   phone_number String?
+  image_url    String?
   role         Role          @default(USER)
   transactions Transaction[]
   createdAt    DateTime      @default(now()) @db.Timestamptz

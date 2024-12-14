@@ -16,17 +16,20 @@ const {
 
 const registerController = async (req, res) => {
     try {
-        const userData  = req.body;
+        const { email, password } = req.body;
 
-        if (!userData.email || !userData.password) {
+        if (!email || !password) {
             throw new Error("email and password are required");
         }
 
-        const hashedPassword = hashPassword(userData.password);
+        const hashedPassword = hashPassword(password);
 
-        userData.password = hashedPassword;
+        const data = {
+            email: email,
+            password: hashedPassword,
+        };
 
-        const user = await create(userData);
+        const user = await create(data);
         res.status(201).json({
             status: "successfully registered",
             data: user,
