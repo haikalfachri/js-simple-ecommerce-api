@@ -7,7 +7,7 @@ const {
 
 const midtransRouter = express.Router();
 
-midtransRouter.post('/notification', midtransPayment);
-midtransRouter.post('/notification/handle', handleMidtransNotification);
+midtransRouter.post('/notifications', midtransPayment);
+midtransRouter.post('/notifications/handles', handleMidtransNotification);
 
 module.exports = midtransRouter;

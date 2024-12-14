@@ -25,7 +25,7 @@ transactionRouter.get('/:id', adminMiddleware, validationMiddleware(idSchema, 'p
 transactionRouter.post('/', adminMiddleware, createController);
 transactionRouter.delete('/:id', adminMiddleware, validationMiddleware(idSchema, 'params'), deleteByIdController);
 transactionRouter.put('/:id', adminMiddleware, validationMiddleware(idSchema, 'params'), updateByIdController);
-transactionRouter.post('/buy', authMiddleware, checkoutController);
-transactionRouter.get('/history/:id', authMiddleware, validationMiddleware(idSchema, 'params'), transactionHistoryController);
+transactionRouter.post('/checkouts', authMiddleware, checkoutController);
+transactionRouter.get('/histories/:id', authMiddleware, validationMiddleware(idSchema, 'params'), transactionHistoryController);
 
 module.exports = transactionRouter;

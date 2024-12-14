@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const router = express.Router();
 
 const userRouter = require("./user");
@@ -7,6 +8,8 @@ const categoryRouter = require("./category");
 const authRouter = require("./auth");
 const transactionRouter = require("./transaction");
 const midtransRouter = require("./midtrans");
+
+router.use("/asset", express.static(path.join(__dirname, "../public/asset")));
 
 router.use("/users", userRouter);
 router.use("/products", productRouter);

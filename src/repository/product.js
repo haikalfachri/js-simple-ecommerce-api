@@ -23,7 +23,14 @@ const getById = async (id) => {
 
 const create = async (data) => {
     const product = await prisma.product.create({
-        data
+        data : {
+            name: data.name,
+            price: data.price,
+            description: data.description,
+            image_url: data.imageUrl,
+            category_id: data.categoryId,
+            stock: data.stock,
+        }
     });
 
     return product;

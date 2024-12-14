@@ -7,6 +7,9 @@ const {
     hardDeleteById,
 } = require("../repository/product");
 
+const fs = require("fs");
+const path = require("path");
+
 const getAllController = async (req, res) => {
     try {
         const products = await getAll();
@@ -43,61 +46,102 @@ const getByIdController = async (req, res) => {
 
 const createController = async (req, res) => {
     try {
-        const { productData } = req.body;
+        const { name, description, stock, price, category_id } = req.body;
+        const folder = "product";
+        const image_url = req.file ? `asset/${folder}/${req.file.filename}` : null;
 
-        if (!productData.name || !productData.price) {
-            throw new Error("name and price are required");
-        }
+        const data = {
+            name,
+            description,
+            imageUrl: image_url,
+            stock: stock ? parseInt(stock, 10) : undefined,
+            price: price ? parseFloat(price) : undefined,
+            categoryId: category_id,
+        };
 
-        const product = await create(productData);
+        const product = await create(data);
 
         res.status(201).json({
-            status: "successfully create new product",
+            status: "success",
+            message: "successfully created new product",
             data: product,
         });
     } catch (error) {
+        if (req.file) {
+            const folder = "product";
+            const imagePath = path.join(__dirname, "../public", `asset/${folder}/${req.file.filename}`);
+            if (fs.existsSync(imagePath)) {
+                fs.unlinkSync(imagePath);
+            }
+        }
+
         res.status(500).json({
             status: "error",
             message: error.message,
         });
     }
-}
+};
 
 const updateByIdController = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, description, image_url, stock, price, category_id } = req.body;
+        const { name, description, stock, price, category_id } = req.body;
+        const folder = "product";
+        const image_url = req.file ? `asset/${folder}/${req.file.filename}` : null;
 
-        const data = {
-            name: name,
-            description: description,
-            imageUrl: image_url,
-            stock: stock,
-            price: price,
-            categoryId: category_id,
-        };
+        const existingProduct = await getById(id);
 
-        const product = await updateById(id, data);
+        if (!existingProduct) {
+            return res.status(404).json({
+                status: "error",
+                message: "product not found",
+            });
+        }
 
-        res.status(200).json({
-            status: "successfully update product by id",
-            data: product,
-        });
+        if (image_url && existingProduct.image_url) {
+            const oldImagePath = path.join(__dirname, "../public", existingProduct.image_url);
+            if (fs.existsSync(oldImagePath)) {
+                fs.unlinkSync(oldImagePath);
+            }
+
+            const updatedData = {
+                name: name || existingProduct.name,
+                description: description || existingProduct.description,
+                imageUrl: image_url || existingProduct.image_url,
+                stock: stock ? parseInt(stock, 10) : existingProduct.stock,
+                price: price ? parseFloat(price) : existingProduct.price,
+                categoryId: category_id || existingProduct.category_id,
+            };
+
+            const updatedProduct = await updateById(id, updatedData);
+
+            res.status(200).json({
+                status: "success",
+                message: "successfully updated the product",
+                data: updatedProduct,
+            });
+        }
     } catch (error) {
         res.status(500).json({
             status: "error",
             message: error.message,
         });
     }
-}
+};
 
 const deleteByIdController = async (req, res) => {
     try {
         const { id } = req.params;
-        const { forceDelete } = req.query; 
+        const { forceDelete } = req.query;
 
         if (forceDelete === 'true') {
-            await hardDeleteById(id); 
+            const existingProduct = await getById(id);
+            const imagePath = path.join(__dirname, "../public", existingProduct.image_url);
+            if (fs.existsSync(imagePath)) {
+                fs.unlinkSync(imagePath);
+            }
+
+            await hardDeleteById(id);
             res.status(200).json({
                 status: "successfully hard delete product by id",
             });
